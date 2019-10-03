@@ -17,6 +17,16 @@ if [[ -z "$INPUT_PASSWORD" ]]; then
 	exit 1
 fi
 
+if [[ -z "$INPUT_OWNER_NAME" ]]; then
+	echo "Set the OWNER_NAME input."
+	exit 1
+fi
+
+if [[ -z "$INPUT_REPO_NAME" ]]; then
+	echo "Set the REPO_NAME input."
+	exit 1
+fi
+
 if [[ -z "$INPUT_IMAGE_NAME" ]]; then
 	echo "Set the IMAGE_NAME input."
 	exit 1
@@ -32,11 +42,6 @@ if [[ -z "$INPUT_BUILD_CONTEXT" ]]; then
 	exit 1
 fi
 
-if [[ -z "$INPUT_VENDOR_NAME" ]]; then
-	echo "Set the VENDOR_NAME input."
-	exit 1
-fi
-
 
 # The following environment variables will be provided by the environment automatically: GITHUB_REPOSITORY, GITHUB_SHA
 
@@ -44,7 +49,7 @@ fi
 echo ${INPUT_PASSWORD} | docker login -u ${INPUT_USERNAME} --password-stdin docker.pkg.github.com
 
 # Set Local Variables
-BASE_NAME="docker.pkg.github.com/${INPUT_VENDOR_NAME}/${INPUT_IMAGE_NAME}"
+BASE_NAME="docker.pkg.github.com/${INPUT_OWNER_NAME}/${INPUT_REPO_NAME}/${INPUT_IMAGE_NAME}"
 TAG_NAME="${BASE_NAME}:${RELEASE_VERSION}"
 
 # Add Arguments For Caching
