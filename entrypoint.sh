@@ -32,6 +32,11 @@ if [[ -z "$INPUT_BUILD_CONTEXT" ]]; then
 	exit 1
 fi
 
+if [[ -z "$INPUT_BUILD_TAG" ]]; then
+	echo "Set the BUILD_TAG input."
+	exit 1
+fi
+
 
 # The following environment variables will be provided by the environment automatically: GITHUB_REPOSITORY, GITHUB_SHA
 
@@ -39,9 +44,8 @@ fi
 echo ${INPUT_PASSWORD} | docker login -u ${INPUT_USERNAME} --password-stdin docker.pkg.github.com
 
 # Set Local Variables
-shortSHA=$(echo "${GITHUB_SHA}" | cut -c1-12)
 BASE_NAME="docker.pkg.github.com/${GITHUB_REPOSITORY}/${INPUT_IMAGE_NAME}"
-SHA_NAME="${BASE_NAME}:${shortSHA}"
+TAG_NAME="${BASE_NAME}:${INPUT_BUILD_TAG}"
 
 # Add Arguments For Caching
 BUILDPARAMS=""
@@ -54,11 +58,9 @@ if [ "${INPUT_CACHE}" == "true" ]; then
 fi
 
 # Build The Container
-docker build $BUILDPARAMS -t ${SHA_NAME} -t ${BASE_NAME} -f ${INPUT_DOCKERFILE_PATH} ${INPUT_BUILD_CONTEXT}
+docker build $BUILDPARAMS -t ${TAG_NAME} -f ${INPUT_DOCKERFILE_PATH} ${INPUT_BUILD_CONTEXT}
 
-# Push two versions, with and without the SHA
-docker push ${BASE_NAME}
-docker push ${SHA_NAME}
+docker push ${TAG_NAME}
 
-echo "::set-output name=IMAGE_SHA_NAME::${SHA_NAME}"
+echo "::set-output name=IMAGE_TAG_NAME::${TAG_NAME}"
 echo "::set-output name=IMAGE_URL::https://github.com/${GITHUB_REPOSITORY}/packages"
