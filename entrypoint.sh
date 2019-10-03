@@ -32,11 +32,6 @@ if [[ -z "$INPUT_BUILD_CONTEXT" ]]; then
 	exit 1
 fi
 
-if [[ -z "$INPUT_BUILD_TAG" ]]; then
-	echo "Set the BUILD_TAG input."
-	exit 1
-fi
-
 
 # The following environment variables will be provided by the environment automatically: GITHUB_REPOSITORY, GITHUB_SHA
 
@@ -45,7 +40,7 @@ echo ${INPUT_PASSWORD} | docker login -u ${INPUT_USERNAME} --password-stdin dock
 
 # Set Local Variables
 BASE_NAME="docker.pkg.github.com/${GITHUB_REPOSITORY}/${INPUT_IMAGE_NAME}"
-TAG_NAME="${BASE_NAME}:${INPUT_BUILD_TAG}"
+TAG_NAME="${BASE_NAME}:${RELEASE_VERSION}"
 
 # Add Arguments For Caching
 BUILDPARAMS=""
